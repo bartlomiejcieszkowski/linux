@@ -417,7 +417,7 @@ int usb_interface_id(struct usb_configuration *config,
 {
 	unsigned id = config->next_interface_id;
 
-	if (id < MAX_CONFIG_INTERFACES) {
+	if (id < CONFIG_USB_GADGET_MAX_CONFIG_INTERFACES) {
 		config->interface[id] = function;
 		config->next_interface_id = id + 1;
 		return id;
@@ -791,7 +791,7 @@ static int set_config(struct usb_composite_dev *cdev,
 	cdev->config = c;
 
 	/* Initialize all interfaces by setting them to altsetting zero. */
-	for (tmp = 0; tmp < MAX_CONFIG_INTERFACES; tmp++) {
+	for (tmp = 0; tmp < CONFIG_USB_GADGET_MAX_CONFIG_INTERFACES; tmp++) {
 		struct usb_function	*f = c->interface[tmp];
 		struct usb_descriptor_header **descriptors;
 
@@ -935,7 +935,7 @@ int usb_add_config(struct usb_composite_dev *cdev,
 					: " full/low")
 				: "");
 
-		for (i = 0; i < MAX_CONFIG_INTERFACES; i++) {
+		for (i = 0; i < CONFIG_USB_GADGET_MAX_CONFIG_INTERFACES; i++) {
 			struct usb_function	*f = config->interface[i];
 
 			if (!f)
@@ -1706,7 +1706,7 @@ composite_setup(struct usb_gadget *gadget, const struct usb_ctrlrequest *ctrl)
 	case USB_REQ_SET_INTERFACE:
 		if (ctrl->bRequestType != USB_RECIP_INTERFACE)
 			goto unknown;
-		if (!cdev->config || intf >= MAX_CONFIG_INTERFACES)
+		if (!cdev->config || intf >= CONFIG_USB_GADGET_MAX_CONFIG_INTERFACES)
 			break;
 		f = cdev->config->interface[intf];
 		if (!f)
@@ -1735,7 +1735,7 @@ composite_setup(struct usb_gadget *gadget, const struct usb_ctrlrequest *ctrl)
 	case USB_REQ_GET_INTERFACE:
 		if (ctrl->bRequestType != (USB_DIR_IN|USB_RECIP_INTERFACE))
 			goto unknown;
-		if (!cdev->config || intf >= MAX_CONFIG_INTERFACES)
+		if (!cdev->config || intf >= CONFIG_USB_GADGET_MAX_CONFIG_INTERFACES)
 			break;
 		f = cdev->config->interface[intf];
 		if (!f)
@@ -1771,7 +1771,7 @@ composite_setup(struct usb_gadget *gadget, const struct usb_ctrlrequest *ctrl)
 			goto unknown;
 		value = 2;	/* This is the length of the get_status reply */
 		put_unaligned_le16(0, req->buf);
-		if (!cdev->config || intf >= MAX_CONFIG_INTERFACES)
+		if (!cdev->config || intf >= CONFIG_USB_GADGET_MAX_CONFIG_INTERFACES)
 			break;
 		f = cdev->config->interface[intf];
 		if (!f)
@@ -1794,7 +1794,7 @@ composite_setup(struct usb_gadget *gadget, const struct usb_ctrlrequest *ctrl)
 			goto unknown;
 		switch (w_value) {
 		case USB_INTRF_FUNC_SUSPEND:
-			if (!cdev->config || intf >= MAX_CONFIG_INTERFACES)
+			if (!cdev->config || intf >= CONFIG_USB_GADGET_MAX_CONFIG_INTERFACES)
 				break;
 			f = cdev->config->interface[intf];
 			if (!f)
@@ -1899,7 +1899,7 @@ unknown:
 
 		switch (ctrl->bRequestType & USB_RECIP_MASK) {
 		case USB_RECIP_INTERFACE:
-			if (!cdev->config || intf >= MAX_CONFIG_INTERFACES)
+			if (!cdev->config || intf >= CONFIG_USB_GADGET_MAX_CONFIG_INTERFACES)
 				break;
 			f = cdev->config->interface[intf];
 			break;
