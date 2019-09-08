@@ -30,6 +30,17 @@ static int generic_get_cmd(struct usb_audio_control *con, u8 cmd);
 #define F_AUDIO_AS_INTERFACE	1
 #define F_AUDIO_NUM_INTERFACES	1
 
+static struct usb_interface_assoc_descriptor iad_desc = {
+	.bLength = sizeof iad_desc,
+	.bDescriptorType = USB_DT_INTERFACE_ASSOCIATION,
+
+	.bFirstInterface = 0,
+	.bInterfaceCount = 2,
+	.bFunctionClass = USB_CLASS_AUDIO,
+	.bFunctionSubClass = USB_SUBCLASS_AUDIOCONTROL,
+	.bFunctionProtocol = 0,
+};
+
 /* B.3.1  Standard AC Interface Descriptor */
 static struct usb_interface_descriptor ac_interface_desc = {
 	.bLength =		USB_DT_INTERFACE_SIZE,
@@ -187,6 +198,7 @@ static struct uac_iso_endpoint_descriptor as_iso_out_desc = {
 };
 
 static struct usb_descriptor_header *f_audio_desc[] = {
+	(struct usb_descriptor_header *)&iad_desc, /* use the descriptor */
 	(struct usb_descriptor_header *)&ac_interface_desc,
 	(struct usb_descriptor_header *)&ac_header_desc,
 
