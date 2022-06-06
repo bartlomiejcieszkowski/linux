@@ -1944,7 +1944,7 @@ unknown:
 				if (w_index != 0x5 || (w_value >> 8))
 					break;
 				interface = w_value & 0xFF;
-				if (interface >= MAX_CONFIG_INTERFACES ||
+				if (interface >= CONFIG_USB_GADGET_MAX_CONFIG_INTERFACES ||
 				    !os_desc_cfg->interface[interface])
 					break;
 				buf[6] = w_index;
