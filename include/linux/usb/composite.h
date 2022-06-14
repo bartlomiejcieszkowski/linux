@@ -255,8 +255,6 @@ int config_ep_by_speed_and_alt(struct usb_gadget *g, struct usb_function *f,
 int config_ep_by_speed(struct usb_gadget *g, struct usb_function *f,
 			struct usb_ep *_ep);
 
-#define	MAX_CONFIG_INTERFACES		16	/* arbitrary; max 255 */
-
 /**
  * struct usb_configuration - represents one gadget configuration
  * @label: For diagnostics, describes the configuration.
@@ -331,7 +329,7 @@ struct usb_configuration {
 	unsigned		highspeed:1;
 	unsigned		fullspeed:1;
 	unsigned		superspeed_plus:1;
-	struct usb_function	*interface[MAX_CONFIG_INTERFACES];
+	struct usb_function	*interface[CONFIG_USB_GADGET_MAX_CONFIG_INTERFACES];
 };
 
 int usb_add_config(struct usb_composite_dev *,
