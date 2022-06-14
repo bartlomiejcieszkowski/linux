@@ -132,6 +132,17 @@ static struct usb_endpoint_descriptor ac_int_ep_desc = {
 	.bInterval = 4,
 };
 
+static struct usb_interface_assoc_descriptor iad_desc = {
+	.bLength = sizeof iad_desc,
+	.bDescriptorType = USB_DT_INTERFACE_ASSOCIATION,
+
+	.bFirstInterface = 0,
+	.bInterfaceCount = 3,
+	.bFunctionClass = USB_CLASS_AUDIO,
+	.bFunctionSubClass = USB_SUBCLASS_AUDIOCONTROL,
+	.bFunctionProtocol = 0,
+};
+
 /* B.4.1  Standard AS Interface Descriptor */
 static struct usb_interface_descriptor as_out_interface_alt_0_desc = {
 	.bLength =		USB_DT_INTERFACE_SIZE,
@@ -253,6 +264,7 @@ static struct uac_iso_endpoint_descriptor as_iso_in_desc = {
 };
 
 static struct usb_descriptor_header *f_audio_desc[] = {
+	(struct usb_descriptor_header *)&iad_desc,
 	(struct usb_descriptor_header *)&ac_interface_desc,
 	(struct usb_descriptor_header *)&ac_header_desc,
 
@@ -1225,6 +1237,7 @@ static int f_audio_bind(struct usb_configuration *c, struct usb_function *f)
 	if (status < 0)
 		goto err_free_fu;
 	ac_interface_desc.bInterfaceNumber = status;
+	iad_desc.bFirstInterface = status;
 	uac1->ac_intf = status;
 	uac1->ac_alt = 0;
 
@@ -1251,6 +1264,8 @@ static int f_audio_bind(struct usb_configuration *c, struct usb_function *f)
 		uac1->as_in_intf = status;
 		uac1->as_in_alt = 0;
 	}
+
+	iad_desc.bInterfaceCount = 1 + status - iad_desc.bFirstInterface;
 
 	audio->gadget = gadget;
 
